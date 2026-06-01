@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 public class PlayerControls : MonoBehaviour
 {
@@ -22,9 +23,12 @@ public class PlayerControls : MonoBehaviour
     // Aim object objects & positions
     public List<GameObject> AimObjects = new List<GameObject>();
 
-    // Power
+    // Gameplay
     public float PowerLimit = 5f;
     public Vector2 ShotPower;
+    public int playerMoveCooldown;
+
+    public GameManager gameManager;
 
     Rigidbody2D rb;
     void Start()
@@ -38,6 +42,7 @@ public class PlayerControls : MonoBehaviour
 
         // Component Refs
         rb = GetComponent<Rigidbody2D>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }
 
     void Update()
@@ -53,12 +58,12 @@ public class PlayerControls : MonoBehaviour
         for (int i = 0; i < AimObjects.Count; i++)
         {
             AimObjects[i].transform.localPosition = Vector2.Lerp(Vector2.zero, -ShotPower, ((float)i + 1) / AimObjects.Count);
-
         }
 
-        if (MouseLeftClick.WasPressedThisFrame())
+        if (MouseLeftClick.WasPressedThisFrame() && playerMoveCooldown <= 0)
         {
             LaunchAtom(ShotPower);
+            playerMoveCooldown = 150;
         }
     }
 
@@ -66,4 +71,35 @@ public class PlayerControls : MonoBehaviour
     {
         rb.linearVelocity = -power * 3;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        switch (collision.tag)
+        {
+            case "Proton":
+                rb.linearVelocity = rb.linearVelocity * 2;
+                gameManager.UpdateScores(1, 0);
+                collision.gameObject.SetActive(false);
+                break;
+            case "Neutron":
+                gameManager.UpdateScores(0, 1);
+                collision.gameObject.SetActive(false);
+                break;
+            case "Electron":
+                rb.linearVelocity = -rb.linearVelocity * 2;
+                gameManager.UpdateScores(-1, 0);
+                collision.gameObject.SetActive(false);
+                break;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if(playerMoveCooldown >= 0)
+        {
+            playerMoveCooldown -= 1;
+        }
+    }
+
+
 }
