@@ -64,6 +64,9 @@ public class LevelGenerator : MonoBehaviour
         GetComponent<GameManager>().scoreManager.MovesLeft = UnityEngine.Random.Range(3, 16);
         GetComponent<GameManager>().UpdateUI(2);
         GetComponent<GameManager>().ScoreUIUpdate(GetComponent<GameManager>().scoreManager);
+        GetComponent<ScoresHandler>().levelScore = new SavedScores();
+        GetComponent<ScoresHandler>().levelScore.Seed = seed;
+        GetComponent<GameManager>().scoreManager.SubatomsLeft = GameObject.FindGameObjectsWithTag("Proton").Length + GameObject.FindGameObjectsWithTag("Neutron").Length + GameObject.FindGameObjectsWithTag("Electron").Length;
         Debug.Log("SubatomCount: " + subAtomCount);
         Debug.Log(bestPossibleScore);
     }

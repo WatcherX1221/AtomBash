@@ -1,9 +1,10 @@
 using NUnit.Framework;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 using UnityEngine.Rendering;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class PlayerControls : MonoBehaviour
 {
@@ -75,6 +76,7 @@ public class PlayerControls : MonoBehaviour
                 playerMoveCooldown = 100;
                 gameManager.scoreManager.MovesLeft -= 1;
                 gameManager.ScoreUIUpdate(gameManager.scoreManager);
+                gameManager.gameObject.GetComponent<ScoresHandler>().levelScore.MovesLeft = gameManager.scoreManager.MovesLeft;
             }
 
             if(gameManager.scoreManager.MovesLeft <= 0 && playerMoveCooldown <= 0)
@@ -98,18 +100,18 @@ public class PlayerControls : MonoBehaviour
             case "Proton":
                 // Double the player's current velocity
                 rb.linearVelocity = rb.linearVelocity * 2;
-                gameManager.UpdateScores(1, 0);
+                gameManager.UpdateScores(1, 0, -1, false);
                 collision.gameObject.SetActive(false);
                 break;
             case "Neutron":
                 // Add to the neutron score
-                gameManager.UpdateScores(0, 1);
+                gameManager.UpdateScores(0, 1, -1, false);
                 collision.gameObject.SetActive(false);
                 break;
             case "Electron":
                 // Reverse the player's current velocity and double it
                 rb.linearVelocity = -rb.linearVelocity * 2;
-                gameManager.UpdateScores(-1, 0);
+                gameManager.UpdateScores(-1, 0, -1, false);
                 collision.gameObject.SetActive(false);
                 break;
         }

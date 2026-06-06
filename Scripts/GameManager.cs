@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameObject chargeUI;
     public GameObject neutronUI;
     public GameObject moveUI;
+    public GameObject subatomUI;
 
     public bool IsPlaying;
 
@@ -30,21 +31,35 @@ public class GameManager : MonoBehaviour
 
         IsPlaying = false;
         scoreManager = new ScoreManager();
-        UpdateScores(0, 0);
+        UpdateScores(0, 0, 0, true);
         UpdateUI(0);
     }
-    public void UpdateScores(int chargeScore, int neutronScore)
+    public void UpdateScores(int chargeScore, int neutronScore, int subatomsScore, bool initialUpdate)
     {
         scoreManager.ChargeScore += chargeScore;
         scoreManager.NeutronScore += neutronScore;
+        scoreManager.SubatomsLeft += subatomsScore;
+        if (!initialUpdate)
+        {
+            GetComponent<ScoresHandler>().levelScore.Charge = scoreManager.ChargeScore;
+            GetComponent<ScoresHandler>().levelScore.Neutrons = scoreManager.NeutronScore;
+            GetComponent<ScoresHandler>().levelScore.Subatoms = scoreManager.SubatomsLeft;
+        }
+        
         ScoreUIUpdate(scoreManager);
+
+        if (scoreManager.SubatomsLeft <= 0 && !initialUpdate)
+        {
+            EndGame();
+        }
     }
 
     public void ScoreUIUpdate(ScoreManager score)
     {
         chargeUI.GetComponent<TMP_Text>().text = "Charge: " + score.ChargeScore;
         neutronUI.GetComponent<TMP_Text>().text = "Neutrons: " + score.NeutronScore;
-        moveUI.GetComponent<TMP_Text>().text = "Moves: " + score.MovesLeft; 
+        moveUI.GetComponent<TMP_Text>().text = "Moves: " + score.MovesLeft;
+        subatomUI.GetComponent<TMP_Text>().text = "Subatoms: " + score.SubatomsLeft;
     }
 
     public void UpdateUI(int currentPage)
@@ -93,12 +108,27 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 break;
+            case 3:
+                foreach (GameObject go in uiPanels)
+                {
+                    if (go.name == "GameEndPanel")
+                    {
+                        go.SetActive(true);
+                    }
+                    else
+                    {
+                        go.SetActive(false);
+                    }
+                }
+                break;
         }
         
     }
     public void EndGame()
     {
         IsPlaying = false;
-
+        Debug.Log(GetComponent<ScoresHandler>().levelScore);
+        GetComponent<ScoresHandler>().SaveSeed();
+        UpdateUI(3);
     }
 }
