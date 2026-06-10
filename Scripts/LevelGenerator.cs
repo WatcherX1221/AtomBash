@@ -64,14 +64,31 @@ public class LevelGenerator : MonoBehaviour
             allSubatoms.Add(newSubatom);
         }
 
-        GetComponent<GameManager>().IsPlaying = true;
-        GetComponent<GameManager>().scoreManager.MovesLeft = UnityEngine.Random.Range(3, 16);
-        GetComponent<GameManager>().UpdateUI(2);
-        GetComponent<GameManager>().ScoreUIUpdate(GetComponent<GameManager>().scoreManager);
-        GetComponent<ScoresHandler>().levelScore = new SavedScores();
-        GetComponent<ScoresHandler>().levelScore.Seed = seed;
-        GetComponent<GameManager>().scoreManager.SubatomsLeft = GameObject.FindGameObjectsWithTag("Proton").Length + GameObject.FindGameObjectsWithTag("Neutron").Length + GameObject.FindGameObjectsWithTag("Electron").Length;
+        GameManager gm = GetComponent<GameManager>();
+        ScoresHandler sh = GetComponent<ScoresHandler>();
+        gm.IsPlaying = true;
+        gm.scoreManager.MovesLeft = UnityEngine.Random.Range(3, 16);
+        gm.UpdateUI(2);
+        gm.ScoreUIUpdate(gm.scoreManager);
+        sh.levelScore = new SavedScores();
+        sh.levelScore.Seed = seed;
+        gm.scoreManager.SubatomsLeft = GameObject.FindGameObjectsWithTag("Proton").Length + GameObject.FindGameObjectsWithTag("Neutron").Length + GameObject.FindGameObjectsWithTag("Electron").Length;
+        CalculateBestScore(gm.scoreManager, sh.levelScore);
         Debug.Log("SubatomCount: " + subAtomCount);
         Debug.Log(bestPossibleScore);
+    }
+
+    public void CalculateBestScore(ScoreManager scoreManager, SavedScores savedScores)
+    {
+        scoreManager.MostNeutrons = GameObject.FindGameObjectsWithTag("Neutron").Length;
+        savedScores.MostNeutrons = scoreManager.MostNeutrons;
+        Debug.Log("Most Neutrons" + scoreManager.MostNeutrons);
+        scoreManager.ParMoves = scoreManager.MovesLeft;
+        savedScores.ParMoves = scoreManager.ParMoves;
+        Debug.Log("Par: " + scoreManager.ParMoves);
+        scoreManager.BestSubatomCount = Mathf.Abs(GameObject.FindGameObjectsWithTag("Proton").Length - GameObject.FindGameObjectsWithTag("Electron").Length);
+        savedScores.BestSubatomCount = scoreManager.BestSubatomCount;
+        Debug.Log("Best SubatomCount" + scoreManager.BestSubatomCount);
+        
     }
 }

@@ -61,7 +61,8 @@ public class PlayerControls : MonoBehaviour
             MouseDistPlayer = new Vector2(MousePositionVector.x - transform.position.x, MousePositionVector.y - transform.position.y);
 
             // Clamp the values to create a maximum power.
-            ShotPower = new Vector2(Mathf.Clamp(MouseDistPlayer.x, -PowerLimit, PowerLimit), Mathf.Clamp(MouseDistPlayer.y, -PowerLimit, PowerLimit));
+            ShotPower = new Vector2();
+            ShotPower = Vector2.ClampMagnitude(MouseDistPlayer, PowerLimit);
 
             // Interpolate along the inverse direction of the cursor in relation to the atom
             for (int i = 0; i < AimObjects.Count; i++)
@@ -112,7 +113,7 @@ public class PlayerControls : MonoBehaviour
                 break;
             case "Electron":
                 // Reverse the player's current velocity and double it
-                rb.linearVelocity = -rb.linearVelocity * 2;
+                rb.linearVelocity = -(rb.linearVelocity + ((Vector2)(collision.transform.position - transform.position) * 3)) * 2;
                 gameManager.UpdateScores(-1, 0, -1, false);
                 GameCamera.GetComponent<CameraShake>().ShakeCamera();
                 collision.gameObject.GetComponent<SubatomDisappear>().DisappearEffect();

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class ScoreManager
 {
@@ -10,6 +11,11 @@ public class ScoreManager
     public int NeutronScore;
     public int MovesLeft;
     public int SubatomsLeft;
+
+    // Calculated Best scores
+    public int MostNeutrons; // Simply the most amount of neutrons the player can collect, should be equal to the count of neutrons spawned
+    public int ParMoves; // An expected amount of moves left assuming the player does everything they can well.
+    public int BestSubatomCount; // The best amount of subatoms to be left while keeping a neutral charge. Calculation should be Absolute value of Protons - Electrons. Neutrons may be ignored for this score.
 }
 
 public class GameManager : MonoBehaviour
@@ -21,7 +27,11 @@ public class GameManager : MonoBehaviour
     public GameObject moveUI;
     public GameObject subatomUI;
 
+    [SerializeField]
+    GameObject shakeScreenToggle;
+
     public bool IsPlaying;
+    public bool ShakeScreen;
 
     List<GameObject> uiPanels = new List<GameObject>();
 
@@ -30,6 +40,7 @@ public class GameManager : MonoBehaviour
         uiPanels.AddRange(GameObject.FindGameObjectsWithTag("UI"));
 
         IsPlaying = false;
+        ShakeScreen = true;
         scoreManager = new ScoreManager();
         UpdateScores(0, 0, 0, true);
         UpdateUI(0);
@@ -145,5 +156,10 @@ public class GameManager : MonoBehaviour
         UpdateScores(0, 0, 0, true);
         // Show game end UI
         UpdateUI(3);
+    }
+
+    public void ToggleShake()
+    {
+        ShakeScreen = shakeScreenToggle.GetComponent<Toggle>().isOn;
     }
 }

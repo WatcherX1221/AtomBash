@@ -8,4 +8,8 @@ public class SavedScores
     public int Subatoms;
     public int Neutrons;
     public int MovesLeft;
+
+    public int MostNeutrons;
+    public int ParMoves;
+    public int BestSubatomCount;
 }

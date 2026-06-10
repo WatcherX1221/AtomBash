@@ -16,7 +16,10 @@ public class CameraShake : MonoBehaviour
     }
     public void ShakeCamera()
     {
-        Camera cam = GetComponent<Camera>();
-        transform.position = new Vector2(transform.position.x + Random.Range(-1f, 1f), transform.position.y + Random.Range(-1f, 1f));
+        if(GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().ShakeScreen)
+        {
+            Camera cam = GetComponent<Camera>();
+            transform.position = new Vector2(transform.position.x + Random.Range(-1f, 1f), transform.position.y + Random.Range(-1f, 1f));
+        }
     }
 }

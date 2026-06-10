@@ -87,7 +87,6 @@ public class ScoresHandler : MonoBehaviour
                 }
             }
             Debug.Log("Instances of seed " + levelScore.Seed + " : " + instanceOfSeedInSave);
-            Debug.Log("Seed: " + levelScore.Seed + "Charge: " + levelScore.Charge + "Subatoms: " + levelScore.Subatoms + "Neutrons: " + levelScore.Neutrons + "Moves: " + levelScore.MovesLeft);
             dataPath += "/" + levelScore.Seed + "_" + (instanceOfSeedInSave + 1) + ".json";
 
             try
